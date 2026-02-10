@@ -1,18 +1,25 @@
-﻿namespace WeatherData_Group1;
+﻿using WeatherData_Group1.Services;
+
+namespace WeatherData_Group1;
 
 internal class Program
 {
     static void Main(string[] args)
     {
         //testing
-        Console.WriteLine("Hello, Testing!");
-        Console.WriteLine("greg");
-        Console.WriteLine("hello");
+        //Console.WriteLine("Hello, Testing!");
+        //Console.WriteLine("greg");
+        //Console.WriteLine("hello");
 
-
+        //string txt = "grag";
+        //string path = @"TextFileGreg.txt";
         // (?<Date>^(?<Year>\d{4})-(?<Month>0[1-9]|1[0-2])-(?<Day>0[1-9]|1[0-9]|2[0-9]|3[0-1])) (?<Time>\d{2}:\d{2}:\d{2}),(?<Position>Inne|Ute),(?<Temprature>\-?\d+\.?\d*),(?<Humidity>\d{2})
+        //DataExtract.WriteRow(path, txt);
+        //DataExtract.ReadAll(path);
+        var dataList = DataExtract.ReadAllWeatherData();
+        DataExtract.TestingRegEx(dataList);
+        //DataExtract.mikeRegEx();
 
-        
     }
 }
 
