@@ -35,7 +35,7 @@ internal class Program
 //  ◦ Datafilen är autentisk, och har datafel, och luckor.
 //  ◦ Innehåller 304 480 mätningar
 //  ◦ Datum mellan 2016 - 05 - 31 till 2017 - 01 - 10
-//      ◦ Ignorera data för maj 2016 och jan 2017(med kod)
+//      ◦ Ignorera data för maj 2016 och jan 2017(med kod) 2016 05 och 2017 01
 //  ◦ Yttersensorns placering är inte optimal(solen)
 
 //Följande information ska kunna visas

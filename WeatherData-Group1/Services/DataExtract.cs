@@ -17,7 +17,7 @@ namespace WeatherData_Group1.Services
         private static string path = @"..\..\..\TxtFiles\";
 
         private static string fileName = "tempdata5-med fel.txt";
-
+        
         public static void ReadAll(string fileName)
         {
             try
@@ -73,7 +73,7 @@ namespace WeatherData_Group1.Services
         }
         public static void WriteRow(string fileName, string text) 
         {
-            using (StreamWriter streamWriter = new StreamWriter(path + fileName, true))//true är append och lägger på text, utan true skriver den över text filens innehåll
+            using (StreamWriter streamWriter = new StreamWriter(path + fileName, true))//true för append, utan true skriver den över text filens innehåll
             {
                 streamWriter.WriteLine(text);
             }
@@ -81,35 +81,95 @@ namespace WeatherData_Group1.Services
 
         public static void TestingRegEx(List<string> dataList)
         {
-            Regex regex = new Regex(@"(?<Date>^(?<Year>\d{4})-(?<Month>0[1-9]|1[0-2])-(?<Day>0[1-9]|1[0 - 9]|2[0-9]|3[0-1])) (?<Time>\d{2}:\d{2}:\d{2}),(?<Position>Inne|Ute),(?<Temprature>\-?\d+\.?\d*),(?<Humidity>\d{2})");
-            for  (int i = 0; i < 10; i++ )
+            Regex regex = new Regex(@"(?<Date>^(?<Year>\d{4})-(?<Month>0[1-9]|1[0-2])-(?<Day>0[1-9]|1[0-9]|2[0-9]|3[0-1])) (?<Time>\d{2}:\d{2}:\d{2}),(?<Position>Inne|Ute),(?<Temprature>\-?[1-9]?[0-9]\.[1-9]?[0-9]),(?<Humidity>\d{2})");
+            
+            Regex regex2 = new Regex(@"^(?<Year>\d{4})-(?<Month>06)-(?<Day>01)");
+
+
+            List<string> AllDataPoints = new();
+            foreach (var dataPoint in dataList) 
             {
-                Match match = regex.Match(dataList[i]);
+                Match match = regex.Match(dataPoint);
 
                 string date = match.Groups["Date"].Value;
+                string year = match.Groups["Year"].Value;
+                string month = match.Groups["Month"].Value;
+                string time = match.Groups["Time"].Value;
+                string position = match.Groups["Position"].Value;
+                string temprature = match.Groups["Temprature"].Value;
+                string humidity = match.Groups["Humidity"].Value;
+                regex.GroupBy(d = d.Match(dataPoint).Groups["Date"].Value).ToList;
+                if (match.Success)
+                {
+                        
+                    if (year == "2016" && month == "05") { }
+                    else if (year == "2017" && month == "01"){ }
+                    else
+                    {
+                        //var datapoint = new Day
+                        //{
+                        //    Date = date,
+                        //    Month = month,
+                        //    Time = time,
+                        //    Position = position
+                        //    Temprature = temprature
+                        //    Humidity - humidity
+                        //};
+
+                        regex.GroupBy
+                        AllDataPoints.Add(dataPoint);
+                        
+                    }
+                }
+            }
+
+            AllDataPoints.Where(d => d).Include(d => d).ToList;
+
+            for  (int i = 0; i < dataList.Count; i++)//2016-06-01
+            {
+
+                Match match = regex.Match(dataList[i]);//2016 05 och 2017 01
+
+                string date = match.Groups["Date"].Value;
+                string year = match.Groups["Year"].Value;
+                string month = match.Groups["Month"].Value;
+                string time = match.Groups["Time"].Value;
                 string position = match.Groups["Position"].Value;
                 string temprature = match.Groups["Temprature"].Value;
                 string humidity = match.Groups["Humidity"].Value;
 
                 if (match.Success)
                 {
-                    
-                    Console.WriteLine($"{dataList[i]} yes");
-                    Console.WriteLine($"datum: {date}");
-                    Console.WriteLine($"position: {position}");
-                    Console.WriteLine($"temprature: {temprature}");
-                    Console.WriteLine($"humidity: {humidity}");
+                    //(year != "2016" && month != "05") || (year != "2017" && month != "01")
+                    if (year == "2016" && month == "05" )
+                    {
+                        //Console.WriteLine($"{dataList[i]} Wrong date 1");
+                    }
+                    else if (year == "2017" && month == "01")
+                    {
+                        //Console.WriteLine($"{dataList[i]} Wrong date 2");
+                    }
+                    else
+                    {
+
+                        
+                        Console.WriteLine($"{dataList[i]} yes");
+                        //Console.WriteLine($"Time: {time}");
+                        //Console.WriteLine($"datum: {date}");
+                        //Console.WriteLine($"position: {position}");
+                        //Console.WriteLine($"temprature: {temprature}");
+                        //Console.WriteLine($"humidity: {humidity}");
+                    }
+
+
                     
                 }
                 else
                 {
-                    Console.WriteLine($"{dataList[i]} no");
-                    Console.WriteLine($"datum: {date}");
-                    Console.WriteLine($"position: {position}");
-                    Console.WriteLine($"temprature: {temprature}");
-                    Console.WriteLine($"humidity: {humidity}");
+                    Console.WriteLine($"{dataList[i]} no");      
                 }
             }
+            //test.Where(d => d).Include(d => d).ToList;
         }
         public static void mikeRegEx() 
         {
