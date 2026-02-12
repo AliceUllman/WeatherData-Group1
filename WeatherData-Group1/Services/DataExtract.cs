@@ -82,11 +82,8 @@ namespace WeatherData_Group1.Services
             }
         }
 
-        
-        public static List<DataPoint> DataPointParser(List<string> dataList)
+        public static List<DataPoint> GetAllWeatherDataPoints(List<string> dataList)
         {
-            
-
             List<DataPoint> AllDataPoints = new();
 
             foreach (var dataPoint in dataList) 
@@ -98,7 +95,6 @@ namespace WeatherData_Group1.Services
                 
                 if (match.Success)
                 {
-
                     if (year == "2016" && month == "05") { /*do nothing*/ }
                     else if (year == "2017" && month == "01") { /*do nothing*/ }
                     else
@@ -113,7 +109,7 @@ namespace WeatherData_Group1.Services
                             Time = match.Groups["Time"].Value,
                             Temprature = double.Parse(match.Groups["Temprature"].Value, CultureInfo.InvariantCulture),
                             Humidity = double.Parse(match.Groups["Humidity"].Value, CultureInfo.InvariantCulture),
-                            Inside = match.Groups["Position"].Value == "Inside" //this is a condition, if it is fulfilled then it becomes true thus giving the bool the correct value
+                            Inside = match.Groups["Position"].Value == "Inne" //this is a condition, if it is fulfilled then it becomes true thus giving the bool the correct value
                         };
                         AllDataPoints.Add(data);
                     }
@@ -121,69 +117,23 @@ namespace WeatherData_Group1.Services
             }
 
             return AllDataPoints;
-
-            //    Match match = regex.Match(dataList[i]);
-
-            //    string date = match.Groups["Date"].Value;
-            //    string year = match.Groups["Year"].Value;
-            //    string month = match.Groups["Month"].Value;
-            //    string day = match.Groups["Day"].Value;
-            //    string time = match.Groups["Time"].Value;
-            //    string position = match.Groups["Position"].Value;
-            //    string temprature = match.Groups["Temprature"].Value;
-            //    string humidity = match.Groups["Humidity"].Value;
-            //}
-
         }
 
-
-        public static void PrintDayAndAvgTemp(List<DataPoint> dayDataList )
+        public static List<Day> GetDays() 
         {
-            //var AllDataPoints = DataPointParser(ReadAllWeatherData());
+           
+            List<DataPoint> AllDataPoints = GetAllWeatherDataPoints(ReadAllWeatherData());
+            var dayDataList = AllDataPoints.GroupBy(dp => dp.Date);
 
-            double all = dayDataList.Select(dp => dp.Temprature).Sum();
-            double avg = all / dayDataList.Count();
-
-            foreach (var dataPoint in dayDataList)
+            List<Day> days = new();
+            foreach (var dayData in dayDataList) 
             {
-                Console.WriteLine($"Day: {dataPoint.Day} avgTemp: {avg:F2}");
+                List<DataPoint> dataPoints = dayData.ToList();
+                string date = dataPoints.Select(dp => dp.Date).First();
+                string month = dataPoints.Select(dp => dp.Month).First();
+                days.Add(new Day ( date, month, dataPoints));
             }
-        }
-
-        public static void GetDayList(bool inside) 
-        {
-            var AllDataPoints = DataPointParser(ReadAllWeatherData());
-            IEnumerable<IGrouping<string ,DataPoint>> dayDataList = AllDataPoints.Where(dp => dp.Inside == inside).GroupBy(dp => dp.Date);
-        }
-
-        public static void mikeRegEx() 
-        {
-            string[] times = { "11:33:24", "33:12:11", "29:10:20", "blabla 23:52:34", "00:13:23 PM", "09:75:13" };
-
-            Regex regex = new Regex("^(?<hour>[0-2][0-9]):([0-5][0-9]):([0-5][0-9])$");
-
-            foreach (var time in times)
-            {
-                Match match = regex.Match(time);
-
-                if (match.Success)
-                {
-                    int hour = int.Parse(match.Groups["hour"].Value);
-
-                    if (hour < 24)
-                    {
-                        Console.WriteLine(time + " - Helt korrekt format");
-                    }
-                    else
-                    {
-                        Console.WriteLine(time + " - Matchar mönstret, men har fel värde");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(time + " - Matchar inte alls!");
-                }
-            }
+            return days;
         }
     }
 }

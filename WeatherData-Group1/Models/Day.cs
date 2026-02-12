@@ -10,31 +10,38 @@ namespace WeatherData_Group1.Models
     {
         public string Date { get; set; }
         public string Month { get; set; }
-        public string[] Times { get; set; }
 
-        public double[] Tempratures { get; set; }
-        public double[] Humidities { get; set; }
+        List<DataPoint> DataPoints { get; set; }
 
-        public bool Inside { get; set; }
+        public double AvgTempInside { get; set; } 
+        public double AvgHumidityinside { get; set; }
+        public double AvgTempOutside { get; set; }
+        public double AvgHumidityOutside { get; set; }
 
-        public double AvgTemp { get; set; } 
-        public double AvgHumidity { get; set; }
-
-        public Day(string date, string month, string[] times, double[] tempratures, double[] humidities, bool inside) 
+        public Day(string date, string month, List<DataPoint> dataPoints) 
         {
             Date = date;
             Month = month;
-            Times = times;
-            Tempratures = tempratures;
-            Humidities = humidities;
-            Inside = inside;
-            AvgTemp = GetAvgTemp(tempratures);
-            AvgHumidity = GetAvgHumidity(humidities);
+            DataPoints = dataPoints;
+            
+            AvgTempOutside = GetAvgTempOutside(dataPoints);
+            AvgTempInside = GetAvgTempInside(dataPoints);
         }
 
-        private double GetAvgTemp(double[] tempratures) 
+        private double GetAvgTempInside(List<DataPoint> dataPoints) 
         {
-            double avg = tempratures.Sum() / tempratures.Count();
+            List<DataPoint> inside = dataPoints.Where(dp => dp.Inside ).ToList();
+            double sum = inside.Select(dp => dp.Temprature).Sum();
+            double avg = sum / inside.Count;
+           
+            return avg;
+        }
+        private double GetAvgTempOutside(List<DataPoint> dataPoints)
+        {
+            List<DataPoint> outside = dataPoints.Where(dp => dp.Inside).ToList();
+            double sum = outside.Select(dp => dp.Temprature).Sum();
+            double avg = sum / outside.Count;
+
             return avg;
         }
 

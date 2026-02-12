@@ -1,4 +1,5 @@
-﻿using WeatherData_Group1.Services;
+﻿using WeatherData_Group1.Models;
+using WeatherData_Group1.Services;
 
 namespace WeatherData_Group1;
 
@@ -18,12 +19,119 @@ internal class Program
         //DataExtract.WriteRow(path, txt);
         //DataExtract.ReadAll(path);
 
-        DataExtract.PrintDayAndAvgTemp();
+        //DataExtract.PrintDayAndAvgTemp();
 
-        //DataExtract.mikeRegEx();
+        //var sortedDays = SortInsideTemp(DataExtract.GetDays());
 
+        //foreach (var day in sortedDays) 
+        //{
+        //    Console.WriteLine($"{day.Date} Inside:{day.AvgTempInside:F2} Outside:{day.AvgTempOutside:F2}");
+        //}
+
+        List<string> meny = new List<string>{ "All", "Search", "Humidity", "Mold", "AutumnDay", "WinterDay", "Report" };
+        int selectedIndex = 0;
+        while (true)
+        {
+            Console.CursorVisible = false;
+            Printer(selectedIndex, meny);
+
+            var key = Console.ReadKey(true).Key;
+            
+            if (key == ConsoleKey.DownArrow)
+            {
+                selectedIndex = (selectedIndex + 1) % meny.Count;
+            }
+            else if (key == ConsoleKey.UpArrow)
+            {
+                selectedIndex = (selectedIndex - 1 + meny.Count) % meny.Count;
+            }
+            else if (key == ConsoleKey.Enter)
+            {
+                switch (selectedIndex) 
+                {
+                    case 0: //All
+                        break;
+                    case 1: //Search
+                        break;
+
+                }
+            }
+
+            //Console.Clear();
+            Console.SetCursorPosition(0, 0);
+        }
     }
+
+    public static List<Day> SortInsideTemp(List<Day> days)
+    {
+        List<Day> sortedDays = days.OrderBy(d => d.AvgTempInside).ToList();
+        return sortedDays;
+    }
+
+    public static void Printer(int index, List<string> text) 
+    { 
+        for (int i = 0; i< text.Count(); i++ )
+        {
+            if(index == i)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($" {text[i]} ");
+                Console.ResetColor();
+            }
+            else Console.WriteLine($" {text[i]} ");
+        }
+        Console.WriteLine(index);
+    }
+    public void MenyGo() 
+    {
+        while (true)
+        {
+            Console.WriteLine("Weather data app");
+
+            Console.WriteLine("[A]ll | [S]earch | sort by [H]umidity | sort by [M]old risk | [F] Meteorological autumn | [R]eport");
+            var key = Console.ReadKey(true).Key;
+            switch (key)
+            {
+                case ConsoleKey.A:
+                    Console.Clear();
+                    //ListAllToMenu(SortByTemp(Lista));
+                    break;
+                case ConsoleKey.H:
+                    Console.Clear();
+                    Console.WriteLine("Sorted by humidity");
+                    //ListAllToMenu(SortByHum(Lista));
+                    break;
+                case ConsoleKey.M:
+                    Console.Clear();
+                    Console.WriteLine("Sorted by Mold risk");
+                    break;
+                //ListAllToMenu(SortByMoldRisk(Lista));
+                case ConsoleKey.S:
+                    Console.Clear();
+                    //Search(Lista);
+                    break;
+                case ConsoleKey.F:
+                    Console.Clear();
+                    Console.WriteLine("Meteorological autumn date");
+                    //var fallday =
+                    break;
+                case ConsoleKey.W:
+                    Console.Clear();
+                    Console.WriteLine("Meteorological Winter date");
+                    //var winterday =
+                    Console.WriteLine($"(Winterday) {"Average temperature: " + "Winterday.avgtemp"}");
+                    break;
+            }
+        }
+    }
+
+    //private static void ListAllToMenu(Dictionary<string, Day> dictionary) { };
 }
+        
+
+    
+
+
 
 //Skapa klass för att läsa och skriva filer
 //
