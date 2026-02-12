@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace WeatherData_Group1.Services
 {
     public static class DataExtract
     {
+        private static Regex Regex = new Regex(@"(?<Date>^(?<Year>\d{4})-(?<Month>0[1-9]|1[0-2])-(?<Day>0[1-9]|1[0-9]|2[0-9]|3[0-1])) (?<Time>\d{2}:\d{2}:\d{2}),(?<Position>Inne|Ute),(?<Temprature>\-?[1-9]?[0-9]\.[1-9]?[0-9]),(?<Humidity>\d{2})");
 
         private static string path = @"..\..\..\TxtFiles\";
 
@@ -71,6 +73,7 @@ namespace WeatherData_Group1.Services
                 await streamWriter.WriteLineAsync(text);
             }
         }
+
         public static void WriteRow(string fileName, string text) 
         {
             using (StreamWriter streamWriter = new StreamWriter(path + fileName, true))//true för append, utan true skriver den över text filens innehåll
@@ -79,68 +82,80 @@ namespace WeatherData_Group1.Services
             }
         }
 
-        public static void TestingRegEx(List<string> dataList)
+        
+        public static List<DataPoint> DataPointParser(List<string> dataList)
         {
-            Regex regex = new Regex(@"(?<Date>^(?<Year>\d{4})-(?<Month>0[1-9]|1[0-2])-(?<Day>0[1-9]|1[0-9]|2[0-9]|3[0-1])) (?<Time>\d{2}:\d{2}:\d{2}),(?<Position>Inne|Ute),(?<Temprature>\-?[1-9]?[0-9]\.[1-9]?[0-9]),(?<Humidity>\d{2})");
             
-            Regex regex2 = new Regex(@"^(?<Year>\d{4})-(?<Month>06)-(?<Day>01)");
 
-            List<string> AllDataPoints = new();
+            List<DataPoint> AllDataPoints = new();
+
             foreach (var dataPoint in dataList) 
             {
-                Match match = regex.Match(dataPoint);
+                Match match = Regex.Match(dataPoint);
                 
-                string date = match.Groups["Date"].Value;
                 string year = match.Groups["Year"].Value;
                 string month = match.Groups["Month"].Value;
-                string time = match.Groups["Time"].Value;
-                string position = match.Groups["Position"].Value;
-                string temprature = match.Groups["Temprature"].Value;
-                string humidity = match.Groups["Humidity"].Value;
-
                 
                 if (match.Success)
                 {
-                        
-                    if (year == "2016" && month == "05") { }
-                    else if (year == "2017" && month == "01"){ }
+
+                    if (year == "2016" && month == "05") { /*do nothing*/ }
+                    else if (year == "2017" && month == "01") { /*do nothing*/ }
                     else
                     {
-                        var data = new DataPoint//dont know why it does not agree
+                        var data = new DataPoint()
                         {
-                            FullData = dataPoint.ToString(),
+                            FullData = dataPoint,
                             Date = match.Groups["Date"].Value,
                             Year = match.Groups["Year"].Value,
                             Month = match.Groups["Month"].Value,
+                            Day = match.Groups["Day"].Value,
                             Time = match.Groups["Time"].Value,
-                            Temprature = double.Parse(match.Groups["Temprature"].Value),
-                            Humidity = double.Parse(match.Groups["Humidity"].Value),
+                            Temprature = double.Parse(match.Groups["Temprature"].Value, CultureInfo.InvariantCulture),
+                            Humidity = double.Parse(match.Groups["Humidity"].Value, CultureInfo.InvariantCulture),
                             Inside = match.Groups["Position"].Value == "Inside" //this is a condition, if it is fulfilled then it becomes true thus giving the bool the correct value
                         };
-                        AllDataPoints.Add(dataPoint);
-                        
+                        AllDataPoints.Add(data);
                     }
                 }
             }
 
-            //later we use the group by to make a list of data points for each day
-            //AllDataPoints.GroupBy(dp => dp.day)).ToList();
-            
-            for  (int i = 0; i < dataList.Count; i++)//2016-06-01
-            {
+            return AllDataPoints;
 
-                Match match = regex.Match(dataList[i]);//2016 05 och 2017 01
+            //    Match match = regex.Match(dataList[i]);
 
-                string date = match.Groups["Date"].Value;
-                string year = match.Groups["Year"].Value;
-                string month = match.Groups["Month"].Value;
-                string time = match.Groups["Time"].Value;
-                string position = match.Groups["Position"].Value;
-                string temprature = match.Groups["Temprature"].Value;
-                string humidity = match.Groups["Humidity"].Value;
-            }
-            
+            //    string date = match.Groups["Date"].Value;
+            //    string year = match.Groups["Year"].Value;
+            //    string month = match.Groups["Month"].Value;
+            //    string day = match.Groups["Day"].Value;
+            //    string time = match.Groups["Time"].Value;
+            //    string position = match.Groups["Position"].Value;
+            //    string temprature = match.Groups["Temprature"].Value;
+            //    string humidity = match.Groups["Humidity"].Value;
+            //}
+
         }
+
+
+        public static void PrintDayAndAvgTemp(List<DataPoint> dayDataList )
+        {
+            //var AllDataPoints = DataPointParser(ReadAllWeatherData());
+
+            double all = dayDataList.Select(dp => dp.Temprature).Sum();
+            double avg = all / dayDataList.Count();
+
+            foreach (var dataPoint in dayDataList)
+            {
+                Console.WriteLine($"Day: {dataPoint.Day} avgTemp: {avg:F2}");
+            }
+        }
+
+        public static void GetDayList(bool inside) 
+        {
+            var AllDataPoints = DataPointParser(ReadAllWeatherData());
+            IEnumerable<IGrouping<string ,DataPoint>> dayDataList = AllDataPoints.Where(dp => dp.Inside == inside).GroupBy(dp => dp.Date);
+        }
+
         public static void mikeRegEx() 
         {
             string[] times = { "11:33:24", "33:12:11", "29:10:20", "blabla 23:52:34", "00:13:23 PM", "09:75:13" };
