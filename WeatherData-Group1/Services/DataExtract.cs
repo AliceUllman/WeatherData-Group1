@@ -85,12 +85,11 @@ namespace WeatherData_Group1.Services
             
             Regex regex2 = new Regex(@"^(?<Year>\d{4})-(?<Month>06)-(?<Day>01)");
 
-
             List<string> AllDataPoints = new();
             foreach (var dataPoint in dataList) 
             {
                 Match match = regex.Match(dataPoint);
-
+                
                 string date = match.Groups["Date"].Value;
                 string year = match.Groups["Year"].Value;
                 string month = match.Groups["Month"].Value;
@@ -98,7 +97,8 @@ namespace WeatherData_Group1.Services
                 string position = match.Groups["Position"].Value;
                 string temprature = match.Groups["Temprature"].Value;
                 string humidity = match.Groups["Humidity"].Value;
-                regex.GroupBy(d = d.Match(dataPoint).Groups["Date"].Value).ToList;
+
+                
                 if (match.Success)
                 {
                         
@@ -106,25 +106,26 @@ namespace WeatherData_Group1.Services
                     else if (year == "2017" && month == "01"){ }
                     else
                     {
-                        //var datapoint = new Day
-                        //{
-                        //    Date = date,
-                        //    Month = month,
-                        //    Time = time,
-                        //    Position = position
-                        //    Temprature = temprature
-                        //    Humidity - humidity
-                        //};
-
-                        regex.GroupBy
+                        var data = new DataPoint//dont know why it does not agree
+                        {
+                            FullData = dataPoint.ToString(),
+                            Date = match.Groups["Date"].Value,
+                            Year = match.Groups["Year"].Value,
+                            Month = match.Groups["Month"].Value,
+                            Time = match.Groups["Time"].Value,
+                            Temprature = double.Parse(match.Groups["Temprature"].Value),
+                            Humidity = double.Parse(match.Groups["Humidity"].Value),
+                            Inside = match.Groups["Position"].Value == "Inside" //this is a condition, if it is fulfilled then it becomes true thus giving the bool the correct value
+                        };
                         AllDataPoints.Add(dataPoint);
                         
                     }
                 }
             }
 
-            AllDataPoints.Where(d => d).Include(d => d).ToList;
-
+            //later we use the group by to make a list of data points for each day
+            //AllDataPoints.GroupBy(dp => dp.day)).ToList();
+            
             for  (int i = 0; i < dataList.Count; i++)//2016-06-01
             {
 
@@ -137,39 +138,8 @@ namespace WeatherData_Group1.Services
                 string position = match.Groups["Position"].Value;
                 string temprature = match.Groups["Temprature"].Value;
                 string humidity = match.Groups["Humidity"].Value;
-
-                if (match.Success)
-                {
-                    //(year != "2016" && month != "05") || (year != "2017" && month != "01")
-                    if (year == "2016" && month == "05" )
-                    {
-                        //Console.WriteLine($"{dataList[i]} Wrong date 1");
-                    }
-                    else if (year == "2017" && month == "01")
-                    {
-                        //Console.WriteLine($"{dataList[i]} Wrong date 2");
-                    }
-                    else
-                    {
-
-                        
-                        Console.WriteLine($"{dataList[i]} yes");
-                        //Console.WriteLine($"Time: {time}");
-                        //Console.WriteLine($"datum: {date}");
-                        //Console.WriteLine($"position: {position}");
-                        //Console.WriteLine($"temprature: {temprature}");
-                        //Console.WriteLine($"humidity: {humidity}");
-                    }
-
-
-                    
-                }
-                else
-                {
-                    Console.WriteLine($"{dataList[i]} no");      
-                }
             }
-            //test.Where(d => d).Include(d => d).ToList;
+            
         }
         public static void mikeRegEx() 
         {
