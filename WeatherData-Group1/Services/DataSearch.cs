@@ -17,10 +17,7 @@ namespace WeatherData_Group1.Services
 
         public static List<Day> SearchDaysByDates(List<Day> days, string searchMonth, string searchDay)
         {
-
             return null;   
         }
-
-
     }
 }

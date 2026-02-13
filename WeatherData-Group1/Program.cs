@@ -244,10 +244,10 @@ internal class Program
 
     private static void ListAllToMenu(List<Day> days)
     {
-        Console.Write("\u001bc\x1b[3J");
+        Console.Clear();
         foreach (var day in days)
         {
-            PrintDay(day);
+            PrintDay(day, 8);
         }
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
@@ -255,10 +255,10 @@ internal class Program
 
     public static void ListAllToMenu(Day day)
     {
-        Console.Write("\u001bc\x1b[3J");
+        Console.Clear();
         if (day != null)
         {
-            PrintDay(day);
+            PrintDay(day, 10);
         }
         else
         {
@@ -270,9 +270,13 @@ internal class Program
     }
 
 
+    public static void PrintDay(Day day, int padding)
+    {
+        Console.WriteLine($"{day.Date.PadRight(padding)} TempIn:{day.AvgTempInside.ToString().PadRight(padding)} TempOut:{day.AvgTempOutside.ToString().PadRight(padding)} AvgHumIn: {day.AvgHumidityinside.ToString().PadRight(padding)} AvgHumOut: {day.AvgHumidityOutside.ToString().PadRight(padding)} MoldRiskIn: {day.MouldRiskInside.ToString().PadRight(padding)} MoldRiskOut: {day.MouldRiskOutside.ToString().PadRight(padding)}");
+    }
     public static void PrintDay(Day day)
     {
-        Console.WriteLine($"{day.Date} TempIn:{day.AvgTempInside:F2} TempOut:{day.AvgTempOutside:F2} AvgHumIn: {day.AvgHumidityinside} AvgHumOut: {day.AvgHumidityOutside} MoldRiskIn: {day.MouldRiskInside} MoldRiskOut: {day.MouldRiskOutside}");
+        Console.WriteLine($"{day.Date} TempIn:{day.AvgTempInside} TempOut:{day.AvgTempOutside} AvgHumIn: {day.AvgHumidityinside} AvgHumOut: {day.AvgHumidityOutside} MoldRiskIn: {day.MouldRiskInside} MoldRiskOut: {day.MouldRiskOutside}");
     }
 
     public static List<Day> SortInsideTemp(List<Day> days)
@@ -280,19 +284,16 @@ internal class Program
         List<Day> sortedDays = days.OrderByDescending(d => d.AvgTempInside).ToList();
         return sortedDays;
     }
-
     private static List<Day> SortOutsideTemp(List<Day> days)
     {
         List<Day> sortedDays = days.OrderByDescending(d => d.AvgTempOutside).ToList();
         return sortedDays;
     }
-
     private static List<Day> SortHumInside(List<Day> days)
     {
         List<Day> sortedDays = days.OrderBy(d => d.AvgHumidityinside).ToList();
         return sortedDays;
     }
-
     private static List<Day> SortHumOutside(List<Day> days)
     {
         List<Day> sortedDays = days.OrderBy(d => d.AvgHumidityOutside).ToList();

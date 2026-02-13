@@ -28,14 +28,14 @@ namespace WeatherData_Group1.Models
             Month = month;
             DataPoints = dataPoints;
 
-            AvgTempInside = GetAvgTempInside(dataPoints);
-            AvgTempOutside = GetAvgTempOutside(dataPoints);
+            AvgTempInside = Math.Round(GetAvgTempInside(dataPoints),2);
+            AvgTempOutside = Math.Round(GetAvgTempOutside(dataPoints),2);
 
-            AvgHumidityinside = GetAvgHumidityInside(dataPoints);
-            AvgHumidityOutside = GetAvgHumidityOutside(dataPoints);
+            AvgHumidityinside = Math.Round(GetAvgHumidityInside(dataPoints), 2); 
+            AvgHumidityOutside = Math.Round(GetAvgHumidityOutside(dataPoints), 2);
 
-            MouldRiskInside = CalculateMoldRisk(GetAvgTempInside(dataPoints), GetAvgHumidityInside(dataPoints));
-            MouldRiskOutside = CalculateMoldRisk(GetAvgTempOutside(dataPoints), GetAvgHumidityOutside(dataPoints));
+            MouldRiskInside = Math.Round(CalculateMoldRisk(GetAvgTempInside(dataPoints), GetAvgHumidityInside(dataPoints)),2);
+            MouldRiskOutside = Math.Round(CalculateMoldRisk(GetAvgTempOutside(dataPoints), GetAvgHumidityOutside(dataPoints)),2);
         }
 
         private double GetAvgTempInside(List<DataPoint> dataPoints) 
