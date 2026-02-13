@@ -9,15 +9,16 @@ namespace WeatherData_Group1.Services
 {
     public static class DataSearch
     {
-        public static Day SearchDayByDate(List<Day> days, string searchMonth, string searchDay )
+        public static Day SearchDayByDate(List<Day> days, string searchDay )
         {
-            var day = days.Where(d => d.Date.Contains(searchMonth + "-" + searchDay, StringComparison.OrdinalIgnoreCase)).FirstOrDefault(); //StringComparison.OrdinalIgnoreCase = ignores case sensitivity in the search
+            var day = days.Where(d => d.Date.Contains(searchDay, StringComparison.OrdinalIgnoreCase)).FirstOrDefault(); //StringComparison.OrdinalIgnoreCase = ignores case sensitivity in the search
             return day;
         }
 
         public static List<Day> SearchDaysByDates(List<Day> days, string searchMonth, string searchDay)
         {
-            
+
+            return null;   
         }
 
 
