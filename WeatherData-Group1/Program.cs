@@ -7,49 +7,15 @@ internal class Program
 {
     static void Main(string[] args)
     {
-
-        //testing
-        //Console.WriteLine("Hello, Testing!");
-        //Console.WriteLine("greg");
-        //Console.WriteLine("hello");
-
-        //string txt = "grag";
-        //string path = @"TextFileGreg.txt";
-        // (?<Date>^(?<Year>\d{4})-(?<Month>0[1-9]|1[0-2])-(?<Day>0[1-9]|1[0-9]|2[0-9]|3[0-1])) (?<Time>\d{2}:\d{2}:\d{2}),(?<Position>Inne|Ute),(?<Temprature>\-?\d+\.?\d*),(?<Humidity>\d{2})
-        //DataExtract.WriteRow(path, txt);
-        //DataExtract.ReadAll(path);
-
-        //DataExtract.PrintDayAndAvgTemp();
-
-        var days = DataExtract.GetDays(); //En lista med alla dagar
-
-        //var sortedDays = SortInsideTemp(DataExtract.GetDays());
-
-        //foreach (var day in sortedDays)
-        //{
-        //    Console.WriteLine($"{day.Date} Inside:{day.AvgTempInside:F2} Outside:{day.AvgTempOutside:F2}");
-        //}
-
-        MenyLoop();
-
-
+        List<Day> days = DataExtract.GetDays(); //lista med alla dagar skapas 
+        MenyLoop(days);
     }
-    public static List<Day> SortInsideTemp(List<Day> days)
+
+
+
+    public static void MenyLoop(List<Day> days) 
     {
-        List<Day> sortedDays = days.OrderBy(d => d.AvgTempInside).ToList();
-        return sortedDays;
-    }
-    public static void PrintAllDays(List<Day> days) 
-    { 
-        foreach( Day day in days)
-        {
-            Console.WriteLine($"{day}");
-        }
-    }
-
-    public static void MenyLoop() 
-    {
-        List<string> meny = new List<string> { "All", "Search", "Humidity", "Mold", "AutumnDay", "WinterDay", "Report" };
+        List<string> meny = new List<string> { "All", "Search", "Humidity", "Mold", "AutumnDay", "WinterDay","Varmast till kallast", "Report" };
 
         int selectedIndex = 0;
 
@@ -74,33 +40,41 @@ internal class Program
                 {
                     case 0: //All
                         Console.Clear();
-                        var allDays = DataExtract.GetDays();
-                        PrintAllDays(allDays); 
-                        Console.WriteLine("Tryck en valfri tangent för att gå tillbaka...");
-                        Console.ReadKey();
+                        ListAllToMenu(days); 
+                        Console.WriteLine("Press any key to continue...");
                         break;
                     case 1: //Search
                         Console.Clear();
-                        Console.WriteLine("Ange en datum");
+                        Console.Write("Write a day: ");
+                        string day = Console.ReadLine();
+                        Console.Write("Write month: ");
+                        string month = Console.ReadLine();
+                        Day foundDay = DataSearch.SearchDayByDate(days, month, day);
+                        Console.WriteLine();
                         break;
                     case 2: //Humidity
                         break;
                     case 3://Mold
                         break;
                     case 4: //AutumnDay
+
                         break;
                     case 5:// WinterDay
                         break;
-                    case 6: //Report
+                    case 6: //varmast till kallast
+                        ListAllToMenu(SortInsideTemp(days));
+                        break;
+                    case 7: //Kallast till varmast
+                        ListAllToMenu(SortOutsideTemp(days));
                         break;
                    
 
 
                 }
             }
-
-            //Console.Clear(); //bugs out during live share
-            Console.SetCursorPosition(0, 0); 
+            Console.Clear();
+            //bugs out during live share
+            //Console.SetCursorPosition(0, 0); 
         }
     }
 
@@ -162,7 +136,38 @@ internal class Program
         }
     }
 
-    //private static void ListAllToMenu(Dictionary<string, Day> dictionary) { };
+    private static void ListAllToMenu(List<Day> days) 
+    {
+        Console.Clear();
+        foreach (var day in days)
+        {
+            Console.WriteLine($"{day.Date} Inside:{day.AvgTempInside:F2} Outside:{day.AvgTempOutside:F2}");
+        }
+        Console.ReadKey();
+    }
+    public static void PrintDay(Day day)
+    {
+        if (day != null)
+        {
+            Console.WriteLine($"{day.Date} avgtemp: {day.AvgTempInside}");
+        }
+        else 
+        {
+            
+        }
+
+
+    }
+    public static List<Day> SortInsideTemp(List<Day> days)
+    {
+        List<Day> sortedDays = days.OrderBy(d => d.AvgTempInside).ToList();
+        return sortedDays;
+    }
+    private static List<Day> SortOutsideTemp(List<Day> days) 
+    {
+        List<Day> sortedDays = days.OrderBy(d => d.AvgTempOutside).ToList();
+        return sortedDays;
+    }
 }
         
 

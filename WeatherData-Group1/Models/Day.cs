@@ -19,17 +19,23 @@ namespace WeatherData_Group1.Models
         public double AvgHumidityinside { get; set; }
         public double AvgHumidityOutside { get; set; }
 
+        public double MouldRiskInside { get; set; }
+        public double MouldRiskOutside { get; set; }
+
         public Day(string date, string month, List<DataPoint> dataPoints) 
         {
             Date = date;
             Month = month;
             DataPoints = dataPoints;
-            
-            AvgTempOutside = GetAvgTempOutside(dataPoints);
+
             AvgTempInside = GetAvgTempInside(dataPoints);
+            AvgTempOutside = GetAvgTempOutside(dataPoints);
 
             AvgHumidityinside = GetAvgHumidityInside(dataPoints);
             AvgHumidityOutside = GetAvgHumidityOutside(dataPoints);
+
+            MouldRiskInside = CalculateMoldRisk(GetAvgTempInside(dataPoints), GetAvgHumidityInside(dataPoints));
+            MouldRiskOutside = CalculateMoldRisk(GetAvgTempOutside(dataPoints), GetAvgHumidityOutside(dataPoints));
         }
 
         private double GetAvgTempInside(List<DataPoint> dataPoints) 
@@ -64,6 +70,44 @@ namespace WeatherData_Group1.Models
             double avg = sum / outside.Count;
 
             return avg;
+        }
+
+        
+        public static double CalculateMoldRisk(double temperature, double humidity)
+        {
+            // Step 1: Compute critical relative humidity (RHcrit)
+            double rhCrit;
+            if (temperature <= 20)
+            {
+                rhCrit = 0.00267 * Math.Pow(temperature, 3) // 0.00267 * temperature^3 - 0.160 * temperature^2 + 3.13 * temperature + 100
+                       - 0.160 * Math.Pow(temperature, 2) 
+                       + 3.13 * temperature
+                       + 100;
+            }
+            else
+            {
+                rhCrit = 80.0; // default above 20°C
+            }
+
+            // Step 2: Growth suitability factor (GSF)
+            double gsf = 0.0;
+            if (humidity >= rhCrit)
+            {
+                gsf = (humidity - rhCrit) / (100.0 - rhCrit);
+                gsf = Math.Max(0.0, Math.Min(1.0, gsf)); // Clamp between 0 and 1
+            }
+
+            // Step 3: Temperature factor
+            double tempFactor = 0.0;
+            if (temperature >= 0 && temperature <= 50)
+            {
+                tempFactor = temperature / 50.0; // normalized 0–1
+            }
+
+            // Step 4: Daily mold risk
+            double MoldRisk = gsf * tempFactor;
+
+            return MoldRisk;
         }
     }
 }
