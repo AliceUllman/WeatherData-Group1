@@ -146,7 +146,7 @@ internal class Program
 
                             if (autumnCount == 5)
                             {
-                                Console.WriteLine("Autumn started on: " + sortedAutumnDays[i - 4]);
+                                Console.WriteLine("Autumn started on: " + sortedAutumnDays[i - 4].Date);
                                 break;
                             }
                             else if (i == sortedAutumnDays.Count)
@@ -175,7 +175,7 @@ internal class Program
                             }
                             if (winterCount == 5)
                             {
-                                Console.WriteLine("Winter started on: " + sortedWinterDays[i - 4]);
+                                Console.WriteLine("Winter started on: " + sortedWinterDays[i - 4].Date);
                                 break;
                             }
                             else if (i == sortedWinterDays.Count)
