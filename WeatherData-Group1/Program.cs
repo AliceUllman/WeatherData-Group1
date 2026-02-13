@@ -55,7 +55,13 @@ internal class Program
                             if (DateValidation(inputDate))
                             {
                                 Day foundDay = DataSearch.SearchDayByDate(days, inputDate);
-                                if (foundDay == null) continue;
+                                if (foundDay == null)
+                                {
+                                    Console.WriteLine("Finns inte");
+                                    Thread.Sleep(1500);
+                                    Console.Clear();
+                                    continue;
+                                }
                                 else
                                 {
                                     ListAllToMenu(foundDay);
@@ -109,10 +115,12 @@ internal class Program
                         if (input == "1")
                         {
                             ListAllToMenu(SortMoldInside(days));
+                            break;
                         }
                         if (input == "2")
                         {
                             ListAllToMenu(SortMoldOutside(days));
+                            break;
                         }
                         else
                         {
@@ -186,11 +194,15 @@ internal class Program
                         input = Console.ReadLine();
                         if (input == "1")
                         {
+                            Console.WriteLine("Inside varmast:");
                             ListAllToMenu(SortInsideTemp(days));
+                            break;
                         }
                         if (input == "2")
                         {
+                            Console.WriteLine("Outside varmast:");
                             ListAllToMenu(SortOutsideTemp(days));
+                            break;
                         }
                         else
                         {
