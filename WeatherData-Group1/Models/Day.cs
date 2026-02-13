@@ -11,11 +11,12 @@ namespace WeatherData_Group1.Models
         public string Date { get; set; }
         public string Month { get; set; }
 
-        List<DataPoint> DataPoints { get; set; }
+        public List<DataPoint> DataPoints { get; set; }
 
         public double AvgTempInside { get; set; } 
-        public double AvgHumidityinside { get; set; }
         public double AvgTempOutside { get; set; }
+
+        public double AvgHumidityinside { get; set; }
         public double AvgHumidityOutside { get; set; }
 
         public Day(string date, string month, List<DataPoint> dataPoints) 
@@ -26,6 +27,9 @@ namespace WeatherData_Group1.Models
             
             AvgTempOutside = GetAvgTempOutside(dataPoints);
             AvgTempInside = GetAvgTempInside(dataPoints);
+
+            AvgHumidityinside = GetAvgHumidityInside(dataPoints);
+            AvgHumidityOutside = GetAvgHumidityOutside(dataPoints);
         }
 
         private double GetAvgTempInside(List<DataPoint> dataPoints) 
@@ -38,16 +42,27 @@ namespace WeatherData_Group1.Models
         }
         private double GetAvgTempOutside(List<DataPoint> dataPoints)
         {
-            List<DataPoint> outside = dataPoints.Where(dp => dp.Inside).ToList();
+            List<DataPoint> outside = dataPoints.Where(dp => !dp.Inside).ToList();
             double sum = outside.Select(dp => dp.Temprature).Sum();
             double avg = sum / outside.Count;
 
             return avg;
         }
 
-        private double GetAvgHumidity(double[] humidities)
+        private double GetAvgHumidityInside(List<DataPoint> dataPoints)
         {
-            double avg = humidities.Sum() / humidities.Count();
+            List<DataPoint> inside = dataPoints.Where(dp => dp.Inside).ToList();
+            double sum = inside.Select(dp => dp.Humidity).Sum();
+            double avg = sum / inside.Count;
+            
+            return avg;
+        }
+        private double GetAvgHumidityOutside(List<DataPoint> dataPoints)
+        {
+            List<DataPoint> outside = dataPoints.Where(dp => !dp.Inside).ToList();
+            double sum = outside.Select(dp => dp.Humidity).Sum();
+            double avg = sum / outside.Count;
+
             return avg;
         }
     }

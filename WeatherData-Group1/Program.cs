@@ -21,22 +21,45 @@ internal class Program
 
         //DataExtract.PrintDayAndAvgTemp();
 
+        var days = DataExtract.GetDays(); //En lista med alla dagar
+
         //var sortedDays = SortInsideTemp(DataExtract.GetDays());
 
-        //foreach (var day in sortedDays) 
+        //foreach (var day in sortedDays)
         //{
         //    Console.WriteLine($"{day.Date} Inside:{day.AvgTempInside:F2} Outside:{day.AvgTempOutside:F2}");
         //}
 
-        List<string> meny = new List<string>{ "All", "Search", "Humidity", "Mold", "AutumnDay", "WinterDay", "Report" };
+        MenyLoop();
+
+
+    }
+    public static List<Day> SortInsideTemp(List<Day> days)
+    {
+        List<Day> sortedDays = days.OrderBy(d => d.AvgTempInside).ToList();
+        return sortedDays;
+    }
+    public static void PrintAllDays(List<Day> days) 
+    { 
+        foreach( Day day in days)
+        {
+            Console.WriteLine($"{day}");
+        }
+    }
+
+    public static void MenyLoop() 
+    {
+        List<string> meny = new List<string> { "All", "Search", "Humidity", "Mold", "AutumnDay", "WinterDay", "Report" };
+
         int selectedIndex = 0;
+
         while (true)
         {
             Console.CursorVisible = false;
             Printer(selectedIndex, meny);
 
             var key = Console.ReadKey(true).Key;
-            
+
             if (key == ConsoleKey.DownArrow)
             {
                 selectedIndex = (selectedIndex + 1) % meny.Count;
@@ -47,25 +70,38 @@ internal class Program
             }
             else if (key == ConsoleKey.Enter)
             {
-                switch (selectedIndex) 
+                switch (selectedIndex)
                 {
                     case 0: //All
+                        Console.Clear();
+                        var allDays = DataExtract.GetDays();
+                        PrintAllDays(allDays); 
+                        Console.WriteLine("Tryck en valfri tangent för att gå tillbaka...");
+                        Console.ReadKey();
                         break;
                     case 1: //Search
+                        Console.Clear();
+                        Console.WriteLine("Ange en datum");
                         break;
+                    case 2: //Humidity
+                        break;
+                    case 3://Mold
+                        break;
+                    case 4: //AutumnDay
+                        break;
+                    case 5:// WinterDay
+                        break;
+                    case 6: //Report
+                        break;
+                   
+
 
                 }
             }
 
-            //Console.Clear();
-            Console.SetCursorPosition(0, 0);
+            //Console.Clear(); //bugs out during live share
+            Console.SetCursorPosition(0, 0); 
         }
-    }
-
-    public static List<Day> SortInsideTemp(List<Day> days)
-    {
-        List<Day> sortedDays = days.OrderBy(d => d.AvgTempInside).ToList();
-        return sortedDays;
     }
 
     public static void Printer(int index, List<string> text) 
@@ -82,6 +118,7 @@ internal class Program
         }
         Console.WriteLine(index);
     }
+
     public void MenyGo() 
     {
         while (true)
