@@ -133,63 +133,90 @@ internal class Program
                         }
                         break;
                     case 4: //AutumnDay
-                        Console.Clear();
-                        var sortedAutumnDays = days.OrderBy(d => d.Date).ToList();
-                        int autumnCount = 0;
-                        for (int i = 0; i < sortedAutumnDays.Count; i++)
                         {
-                            if (sortedAutumnDays[i].AvgTempOutside < 10)
+                            Console.Clear();
+                            var sortedAutumnDays = days.OrderBy(d => d.Date).ToList();
+                            int autumnCount = 0;
+                            for (int i = 0; i < sortedAutumnDays.Count; i++)
                             {
-                                autumnCount++; //fortsätta 
-                            }
-                            else
-                            {
-                                autumnCount = 0; // börja om
-                            }
+                                if (sortedAutumnDays[i].AvgTempOutside < 10)
+                                {
+                                    autumnCount++; //fortsätta 
+                                }
+                                else
+                                {
+                                    autumnCount = 0; // börja om
+                                }
 
-                            if (autumnCount == 5)
-                            {
-                                Console.WriteLine("Autumn started on: " + sortedAutumnDays[i - 4].Date);
-                                break;
-                            }
-                            else if (i == sortedAutumnDays.Count)
-                            {
-                                Console.WriteLine("Autumn never happend");
-                            }
+                                if (autumnCount == 5)
+                                {
+                                    Console.WriteLine("Autumn started on: " + sortedAutumnDays[i - 4].Date);
+                                    break;
+                                }
+                                else if (i == sortedAutumnDays.Count)
+                                {
+                                    Console.WriteLine("Autumn never happend");
+                                }
 
+                            }
+                            Console.WriteLine("Press any key to return...");
+                            Console.ReadKey();
+                            break;
                         }
-                        Console.WriteLine("Press any key to return...");
-                        Console.ReadKey();
-                        break;
 
                     case 5:// WinterDay
-                        Console.Clear();
-                        var sortedWinterDays = days.OrderBy(d => d.Date).ToList();
-                        int winterCount = 0;
-                        for (int i = 0; i < sortedWinterDays.Count; i++)
                         {
-                            if (sortedWinterDays[i].AvgTempOutside <= 0)
+                            Console.Clear();
+                            var sortedWinter = days.OrderBy(d => d.Date).ToList();
+
+                            Day officialWinterDay = null; // Startdag för meteorologisk vinter (5 dagar i rad)
+                            Day bestStartDay = null;      // Startdag för längsta kalla perioden
+                            int currentStreak = 0;
+                            int maxStreak = 0;
+
+                            for (int i = 0; i < sortedWinter.Count; i++)
                             {
-                                winterCount++; //fortsätta 
+                                if (sortedWinter[i].AvgTempOutside <= 0)
+                                {
+                                    currentStreak++; 
+
+                                    if (currentStreak > maxStreak)// Håll koll på den längsta perioden 
+                                    {
+                                        maxStreak = currentStreak;
+                                        bestStartDay = sortedWinter[i - currentStreak + 1]; // Spara startdagen för denna streak
+                                    }
+
+                                    // Spara startdatumet när vi når 5 dagar i streak
+                                    if (currentStreak == 5 && officialWinterDay == null)
+                                    {
+                                        officialWinterDay = sortedWinter[i - 4];
+                                    }
+                                }
+                                else
+                                {
+                                    currentStreak = 0; // Återställ räknaren om temp > 0
+                                }
+                            }
+
+                            // Output
+                            if (officialWinterDay != null)
+                            {
+                                Console.WriteLine($"Winter started on: {officialWinterDay.Date}");
                             }
                             else
                             {
-                                winterCount = 0; // börja om
+                                Console.WriteLine("Winter was NOT found.");
+                                if (bestStartDay != null)
+                                {
+                                    Console.WriteLine($"The longest cold period was {maxStreak} consecutive days.");
+                                    Console.WriteLine($"It started on: {bestStartDay.Date}");
+                                }
                             }
-                            if (winterCount == 5)
-                            {
-                                Console.WriteLine("Winter started on: " + sortedWinterDays[i - 4].Date);
-                                break;
-                            }
-                            else if (i == sortedWinterDays.Count)
-                            {
-                                Console.WriteLine("Winter never happend");
-                            }
-                        }
-                        Console.WriteLine("Press any key to return...");
-                        Console.ReadKey();
-                        break;
 
+                            Console.WriteLine("Press any key to return...");
+                            Console.ReadKey();
+                            break;
+                        }
                     case 6: //varmast till kallast
                         Console.Clear();
                         Console.WriteLine("Type 1 for inside");
