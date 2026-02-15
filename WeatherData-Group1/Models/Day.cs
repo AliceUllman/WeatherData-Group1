@@ -34,8 +34,8 @@ namespace WeatherData_Group1.Models
             AvgHumidityinside = Math.Round(GetAvgHumidityInside(dataPoints), 2); 
             AvgHumidityOutside = Math.Round(GetAvgHumidityOutside(dataPoints), 2);
 
-            MouldRiskInside = GetMouldRiskPercent(GetAvgTempInside(dataPoints), GetAvgHumidityInside(dataPoints));
-            MouldRiskOutside = GetMouldRiskPercent(GetAvgTempOutside(dataPoints), GetAvgHumidityOutside(dataPoints));
+            MouldRiskInside = Math.Round(GetMouldRiskPercent(GetAvgTempInside(dataPoints), GetAvgHumidityInside(dataPoints)), 2);
+            MouldRiskOutside = Math.Round(GetMouldRiskPercent(GetAvgTempOutside(dataPoints), GetAvgHumidityOutside(dataPoints)), 2);
         }
 
         private double GetAvgTempInside(List<DataPoint> dataPoints) 
