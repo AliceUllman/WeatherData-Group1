@@ -50,8 +50,8 @@ namespace WeatherData_Group1.Services
                         outsidetemps = Math.Round(outsidetemps / daycounter, 2);
                         humidityoutside = Math.Round(humidityoutside / daycounter, 2);
                         humidityinside = Math.Round(humidityinside / daycounter, 2);
-                        moldriskinside = Math.Round(moldriskinside / daycounter, 2); //
-                        moldriskoutside = Math.Round(moldriskoutside / daycounter, 2); // Får se om den här delen håller lol
+                        moldriskinside = Math.Round(moldriskinside / daycounter, 2); 
+                        moldriskoutside = Math.Round(moldriskoutside / daycounter, 2); 
 
                         writer.WriteLine($"2016/{m.Key} Averages:    InTemp: {insidetemps}°C OutTemp: {outsidetemps} InHum: {humidityinside} OutHum: {humidityoutside} MoldIn: {moldriskinside} MoldOut: {moldriskoutside}");
                         
@@ -61,10 +61,8 @@ namespace WeatherData_Group1.Services
                     writer.WriteLine("Meteoroilgiisk höst: 2016-10-04 ");
                     writer.WriteLine();
                     writer.WriteLine();
-                    writer.WriteLine("Mögelformula pff");
-                    writer.WriteLine();
                     writer.WriteLine("MögelAlgoritm: ");
-                    writer.WriteLine("Input temperature T and humidity H\r\n\r\nIf T < 0 or T > 50 → tempFactor = 0\r\nElse if T ≤ 25 → tempFactor = T / 25\r\nElse → tempFactor = (50 − T) / (50 − 25)\r\nIf tempFactor < 0 → tempFactor = 0\r\n\r\nIf H < 70 → humidityFactor = 0\r\nElse → humidityFactor = H / 90\r\nIf humidityFactor > 1 → humidityFactor = 1\r\n\r\nrisk = tempFactor × humidityFactor × 100");
+                    writer.WriteLine("Input temperature T and humidity H\r\n\r\nIf T < 0 or T > 50 -> tempFactor = 0\r\nElse if T ≤ 25 -> tempFactor = T / 25\r\nElse -> tempFactor = (50 − T) / (50 − 25)\r\nIf tempFactor < 0 -> tempFactor = 0\r\n\r\nIf H < 70 -> humidityFactor = 0\r\nElse -> humidityFactor = H / 90\r\nIf humidityFactor > 1 -> humidityFactor = 1\r\n\r\nrisk = tempFactor × humidityFactor × 100");
 
                 }
                 Console.WriteLine("Filen har skapats.");

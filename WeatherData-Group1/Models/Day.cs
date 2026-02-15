@@ -34,8 +34,8 @@ namespace WeatherData_Group1.Models
             AvgHumidityinside = Math.Round(GetAvgHumidityInside(dataPoints), 2); 
             AvgHumidityOutside = Math.Round(GetAvgHumidityOutside(dataPoints), 2);
 
-            MouldRiskInside = Math.Round(CalculateMoldRisk(GetAvgTempInside(dataPoints), GetAvgHumidityInside(dataPoints)),2);
-            MouldRiskOutside = Math.Round(CalculateMoldRisk(GetAvgTempOutside(dataPoints), GetAvgHumidityOutside(dataPoints)),2);
+            MouldRiskInside = GetMouldRiskPercent(GetAvgTempInside(dataPoints), GetAvgHumidityInside(dataPoints));
+            MouldRiskOutside = GetMouldRiskPercent(GetAvgTempOutside(dataPoints), GetAvgHumidityOutside(dataPoints));
         }
 
         private double GetAvgTempInside(List<DataPoint> dataPoints) 
@@ -72,42 +72,72 @@ namespace WeatherData_Group1.Models
             return avg;
         }
 
-        
-        public static double CalculateMoldRisk(double temperature, double humidity)
+
+        public static string GetMouldRisk(double temperature, double humidity)
         {
-            // Step 1: Compute critical relative humidity (RHcrit)
-            double rhCrit;
-            if (temperature <= 20)
-            {
-                rhCrit = 0.00267 * Math.Pow(temperature, 3) // 0.00267 * temperature^3 - 0.160 * temperature^2 + 3.13 * temperature + 100
-                       - 0.160 * Math.Pow(temperature, 2) 
-                       + 3.13 * temperature
-                       + 100;
-            }
+            const double IdealTemp = 25.0;
+            const double MaxTemp = 50.0;
+            const double MinTemp = 0.0;
+            const double IdealHumidity = 90.0;
+            const double MinHumidity = 70.0;
+
+            //how favorable the temprature is for mold, 0 = worst conditions(0%), 1 = best conditions(100%)
+            double tempFactor;
+
+            if (temperature < MinTemp || temperature > MaxTemp)
+                tempFactor = 0.0;
+            else if (temperature <= IdealTemp)
+                tempFactor = temperature / IdealTemp; //Scale the likelihood up until 25 Celsius (25/25 = 1)
             else
+                tempFactor = Math.Max(0.0, (MaxTemp - temperature) / (MaxTemp - IdealTemp)); //Scale the likelihood down, math max makes sure number does not go negative
+
+            // how favorable the Humidity is for mold, 0 = worst conditions(0%), 1 = best conditions(100%)
+            double humidityFactor;
+            if (humidity >= MinHumidity)
             {
-                rhCrit = 80.0; // default above 20°C
+                humidityFactor = Math.Min(humidity / IdealHumidity, 1.0); //math min to make sure it is not more than 100%
             }
+            else { humidityFactor = 0.0; }
 
-            // Step 2: Growth suitability factor (GSF)
-            double gsf = 0.0;
-            if (humidity >= rhCrit)
+            double riskPercent = tempFactor * humidityFactor * 100.0;
+
+            if (riskPercent < 5) return "Very unlikely";
+            if (riskPercent < 15) return "Unlikely";
+            if (riskPercent < 30) return "Some chance";
+            if (riskPercent < 45) return "Moderate chance";
+            if (riskPercent < 65) return "Likely";
+            if (riskPercent < 85) return "Very likely";
+            return "Almost certain";
+        }
+
+        public static double GetMouldRiskPercent(double temperature, double humidity)
+        {
+            const double IdealTemp = 25.0;
+            const double MaxTemp = 50.0;
+            const double MinTemp = 0.0;
+            const double IdealHumidity = 90.0;
+            const double MinHumidity = 70.0;
+
+            //how favorable the temprature is for mold, 0 = worst conditions(0%), 1 = best conditions(100%)
+            double tempFactor;
+
+            if (temperature < MinTemp || temperature > MaxTemp)
+                tempFactor = 0.0;
+            else if (temperature <= IdealTemp)
+                tempFactor = temperature / IdealTemp; //Scale the likelihood up until 25 Celsius (25/25 = 1)
+            else
+                tempFactor = Math.Max(0.0, (MaxTemp - temperature) / (MaxTemp - IdealTemp)); //Scale the likelihood down, math max makes sure number does not go negative
+
+            // how favorable the Humidity is for mold, 0 = worst conditions(0%), 1 = best conditions(100%)
+            double humidityFactor;
+            if (humidity >= MinHumidity)
             {
-                gsf = (humidity - rhCrit) / (100.0 - rhCrit);
-                gsf = Math.Max(0.0, Math.Min(1.0, gsf)); // Clamp between 0 and 1
+                humidityFactor = Math.Min(humidity / IdealHumidity, 1.0); //math min to make sure it is not more than 100%
             }
+            else { humidityFactor = 0.0; }
 
-            // Step 3: Temperature factor
-            double tempFactor = 0.0;
-            if (temperature >= 0 && temperature <= 50)
-            {
-                tempFactor = temperature / 50.0; // normalized 0–1
-            }
-
-            // Step 4: Daily mold risk
-            double MoldRisk = gsf * tempFactor;
-
-            return MoldRisk;
+            double riskPercent = tempFactor * humidityFactor * 100.0;
+            return riskPercent;
         }
     }
 }
