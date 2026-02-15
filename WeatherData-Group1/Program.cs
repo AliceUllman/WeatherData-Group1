@@ -8,8 +8,11 @@ internal class Program
 {
     static void Main(string[] args)
     {
+
         List<Day> days = DataExtract.GetDays(); //lista med alla dagar skapas 
+
         MenyLoop(days);
+
     }
 
 
@@ -212,6 +215,9 @@ internal class Program
                         }
                         break;
                     case 7: // Skriv ut Textfil medeltemp månad, medelfukt månad, medelmögel månad, datum höst och vinter, skriv ut formel mögel.
+                        Console.Clear();
+                        FileMaker.CreateFile("testreport.txt");
+                        Console.ReadKey();
                         break;
 
 

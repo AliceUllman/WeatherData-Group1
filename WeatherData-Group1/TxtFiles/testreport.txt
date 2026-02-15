@@ -1,0 +1,27 @@
+2016/06 Averages:    InTemp: 24,61°C OutTemp: 15,83 InHum: 28,87 OutHum: 49,07 MoldIn: 0 MoldOut: 0
+2016/07 Averages:    InTemp: 26,16°C OutTemp: 20,07 InHum: 42,95 OutHum: 56,14 MoldIn: 0 MoldOut: 0
+2016/08 Averages:    InTemp: 25,48°C OutTemp: 17,44 InHum: 34,22 OutHum: 50,88 MoldIn: 0 MoldOut: 0
+2016/09 Averages:    InTemp: 23,22°C OutTemp: 16,11 InHum: 41,32 OutHum: 59,74 MoldIn: 0 MoldOut: 0
+2016/10 Averages:    InTemp: 22,41°C OutTemp: 8,18 InHum: 27,25 OutHum: 64,17 MoldIn: 0 MoldOut: 0
+2016/11 Averages:    InTemp: 22,77°C OutTemp: 3,85 InHum: 18,98 OutHum: 84,13 MoldIn: 0 MoldOut: 0
+2016/12 Averages:    InTemp: 21,77°C OutTemp: 3,15 InHum: 16,04 OutHum: 78,39 MoldIn: 0 MoldOut: 0
+
+Meteoroloogisk vinter: 
+Meteoroilgiisk höst: 2016-10-04 
+
+
+Mögelformula pff
+
+MögelAlgoritm: 
+Input temperature T and humidity H
+
+If T < 0 or T > 50 → tempFactor = 0
+Else if T ≤ 25 → tempFactor = T / 25
+Else → tempFactor = (50 − T) / (50 − 25)
+If tempFactor < 0 → tempFactor = 0
+
+If H < 70 → humidityFactor = 0
+Else → humidityFactor = H / 90
+If humidityFactor > 1 → humidityFactor = 1
+
+risk = tempFactor × humidityFactor × 100

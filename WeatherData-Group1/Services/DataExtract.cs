@@ -30,7 +30,7 @@ namespace WeatherData_Group1.Services
                     int rowCount = 0;
                     while (line != null)
                     {
-                        Console.WriteLine(rowCount + " " + line);
+                        Console.WriteLine(" " + line);
                         rowCount++;
                         line = reader.ReadLine();
                     }
