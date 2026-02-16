@@ -71,10 +71,10 @@ internal class Program
                                 else
                                 {
                                     PrintOneDay(foundDay, padding);
-                                    Console.WriteLine("\nPress any key to go back");
-                                    key = Console.ReadKey(true).Key;
                                     break;
                                 }
+                                Console.WriteLine("Press any key to return...");
+                                Console.ReadKey();
                             }
                             else
                             {
@@ -249,10 +249,8 @@ internal class Program
                         FileMaker.CreateFile("Report.txt");
                         Console.ReadKey();
                         break;
-
-
-
                 }
+                key = ConsoleKey.NoName;
             }
             Console.Clear();
         }
@@ -294,13 +292,15 @@ internal class Program
         Console.WriteLine($"{"Date".PadRight(padding)} | {"avg Temp ".PadRight(padding)} | {"avg Temp ".PadRight(padding)} | {"avg Humidity".PadRight(padding)} | {"avg Humidity".PadRight(padding)} | {"avg MoldRisk".PadRight(padding)} | {"avg MoldRisk".PadRight(padding)} | ");
         Console.WriteLine($"{"Date".PadRight(padding)} | {"Inside".PadRight(padding)} | {"Outside".PadRight(padding)} | {"Inside".PadRight(padding)} | {"Outside".PadRight(padding)} | {"Inside".PadRight(padding)} | {"Outside".PadRight(padding)} | ");
         Console.WriteLine($"{new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | ");
-
+        
         foreach (var day in days)
         {
             PrintDay(day, padding);
         }
+        
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
+
     }
 
     public static void ListAllToMenu(Day day)
@@ -332,10 +332,10 @@ internal class Program
         Console.WriteLine($"{day.Date.PadRight(padding)} | {day.AvgTempInside.ToString().PadRight(padding)} | {day.AvgTempOutside.ToString().PadRight(padding)} | {day.AvgHumidityinside.ToString().PadRight(padding)} | {day.AvgHumidityOutside.ToString().PadRight(padding)} | {$"{day.MouldRiskInside.ToString()}%".PadRight(padding)} | {$"{day.MouldRiskOutside.ToString()}%".PadRight(padding)} | ");
     }
 
-    public static List<Day> SortByDate(List<Day> days)
+    public static void SortByDate(List<Day> days)
     {
-        List<Day> sortedDays = days.OrderByDescending(d => d.Date).ToList();
-        return sortedDays;
+        days.OrderByDescending(d => d.Date);
+        
     }
 
     public static List<Day> SortInsideTemp(List<Day> days)
