@@ -71,10 +71,11 @@ internal class Program
                                 else
                                 {
                                     PrintOneDay(foundDay, padding);
+                                    Console.WriteLine();
+                                    Console.WriteLine("Press any key to return...");
+                                    Console.ReadKey();
                                     break;
                                 }
-                                Console.WriteLine("Press any key to return...");
-                                Console.ReadKey();
                             }
                             else
                             {
