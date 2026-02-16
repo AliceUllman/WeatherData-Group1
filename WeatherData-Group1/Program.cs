@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using WeatherData_Group1.Models;
 using WeatherData_Group1.Services;
 
@@ -22,13 +23,14 @@ internal class Program
         List<string> meny = new List<string> { "All", "Search", "Sort by Humidity", "Sort by MoldRisk", "First AutumnDay", "First WinterDay", "Sort by Temprature", "Report" };
 
         int selectedIndex = 0;
-
+        int padding = 12;
         while (true)
         {
             Console.CursorVisible = false;
             Printer(selectedIndex, meny);
-
-            var key = Console.ReadKey(true).Key;
+            ConsoleKey key;
+            
+            key = Console.ReadKey(true).Key;
 
             if (key == ConsoleKey.DownArrow)
             {
@@ -43,7 +45,8 @@ internal class Program
                 switch (selectedIndex)
                 {
                     case 0: //All
-                        ListAllToMenu(days);
+                        SortByDate(days);
+                        PrintAllDays(days, padding);
                         break;
                     case 1: //Search
                         Console.Clear();
@@ -60,14 +63,14 @@ internal class Program
                                 Day foundDay = DataSearch.SearchDayByDate(days, inputDate);
                                 if (foundDay == null)
                                 {
-                                    Console.WriteLine("Finns inte");
+                                    Console.WriteLine("Day does not exist");
                                     Thread.Sleep(1500);
                                     Console.Clear();
                                     continue;
                                 }
                                 else
                                 {
-                                    ListAllToMenu(foundDay);
+                                    PrintOneDay(foundDay, padding);
                                     Console.WriteLine("\nPress any key to go back");
                                     key = Console.ReadKey(true).Key;
                                     break;
@@ -83,32 +86,26 @@ internal class Program
 
                     case 2: //Humidity
                         Console.Clear();
-                        Console.WriteLine("Press key I for inside");
-                        Console.WriteLine("Press key O for outside");
-
+                        Console.WriteLine("Write I for inside");
+                        Console.WriteLine("Write O for outside");
+                        
                         key = Console.ReadKey().Key;
+                        Console.Clear();
                         if (key == ConsoleKey.I)
                         {
-                            var sortedHumidity = days.OrderBy(d => d.AvgHumidityinside).ToList();
                             Console.WriteLine("Inside:");
-                            foreach (var point in sortedHumidity)
-                            {
-                                Console.WriteLine($"{point.Date} : {point.AvgHumidityinside}");
-                            }
+                            PrintAllDays(SortHumInside(days), padding);
                         }
-
-                        if (key == ConsoleKey.O)
+                        else if (key == ConsoleKey.O)
                         {
-                            var sortedHumidity = days.OrderBy(d => d.AvgHumidityOutside).ToList();
+                            days = SortHumOutside(days);
+                            
                             Console.WriteLine("Outside:");
-                            foreach (var point in sortedHumidity)
-                            {
-                                Console.WriteLine($"{point.Date} : {point.AvgHumidityOutside}");
-
-                            }
+                            PrintAllDays(days, padding);
                         }
                         Console.WriteLine("Press any key to return...");
                         Console.ReadKey();
+
                         break;
 
                     case 3://Mold
@@ -120,12 +117,13 @@ internal class Program
                         
                         if (key == ConsoleKey.I)
                         {
-                            ListAllToMenu(SortMoldInside(days));
+                            PrintAllDays(SortMoldInside(days), padding);
                             break;
                         }
-                        if (key == ConsoleKey.O)
+                        else if (key == ConsoleKey.O)
                         {
-                            ListAllToMenu(SortMoldOutside(days));
+                            SortMoldOutside(days);
+                            PrintAllDays(days, padding);
                             break;
                         }
                         else
@@ -226,16 +224,17 @@ internal class Program
                         Console.WriteLine("Press key O for outside");
 
                         key = Console.ReadKey().Key;
+
                         if (key == ConsoleKey.I)
                         {
-                            Console.WriteLine("Inside varmast:");
-                            ListAllToMenu(SortInsideTemp(days));
+                            Console.WriteLine("Inside Warmest day to coldest:");
+                            PrintAllDays(SortInsideTemp(days), padding);
                             break;
                         }
                         if (key == ConsoleKey.O)
                         {
-                            Console.WriteLine("Outside varmast:");
-                            ListAllToMenu(SortOutsideTemp(days));
+                            Console.WriteLine("Outside Warmest day to coldest:");
+                            PrintAllDays(SortOutsideTemp(days), padding);
                             break;
                         }
                         else
@@ -289,12 +288,16 @@ internal class Program
     }
 
 
-    private static void ListAllToMenu(List<Day> days)
+    private static void PrintAllDays(List<Day> days, int padding)
     {
         Console.Clear();
+        Console.WriteLine($"{"Date".PadRight(padding)} | {"avg Temp ".PadRight(padding)} | {"avg Temp ".PadRight(padding)} | {"avg Humidity".PadRight(padding)} | {"avg Humidity".PadRight(padding)} | {"avg MoldRisk".PadRight(padding)} | {"avg MoldRisk".PadRight(padding)} | ");
+        Console.WriteLine($"{"Date".PadRight(padding)} | {"Inside".PadRight(padding)} | {"Outside".PadRight(padding)} | {"Inside".PadRight(padding)} | {"Outside".PadRight(padding)} | {"Inside".PadRight(padding)} | {"Outside".PadRight(padding)} | ");
+        Console.WriteLine($"{new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | ");
+
         foreach (var day in days)
         {
-            PrintDay(day, 8);
+            PrintDay(day, padding);
         }
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
@@ -313,17 +316,26 @@ internal class Program
             Console.WriteLine("Press any key to go back");
         }
         Console.ReadKey();
-
     }
 
 
     public static void PrintDay(Day day, int padding)
-    {
-        Console.WriteLine($"{day.Date.PadRight(padding)} TempIn:{day.AvgTempInside.ToString().PadRight(padding)} TempOut:{day.AvgTempOutside.ToString().PadRight(padding)} AvgHumIn: {day.AvgHumidityinside.ToString().PadRight(padding)} AvgHumOut: {day.AvgHumidityOutside.ToString().PadRight(padding)} MoldRiskIn: {$"{day.MouldRiskInside.ToString()}%".PadRight(padding)} MoldRiskOut: {$"{day.MouldRiskOutside.ToString()}%".PadRight(padding)}");
+    {     
+        Console.WriteLine($"{day.Date.PadRight(padding)} | {day.AvgTempInside.ToString().PadRight(padding)} | {day.AvgTempOutside.ToString().PadRight(padding)} | {day.AvgHumidityinside.ToString().PadRight(padding)} | {day.AvgHumidityOutside.ToString().PadRight(padding)} | {$"{day.MouldRiskInside.ToString()}%".PadRight(padding)} | {$"{day.MouldRiskOutside.ToString()}%".PadRight(padding)} | ");
     }
-    public static void PrintDay(Day day)
+    public static void PrintOneDay(Day day, int padding)
     {
-        Console.WriteLine($"{day.Date} TempIn:{day.AvgTempInside} TempOut:{day.AvgTempOutside} AvgHumIn: {day.AvgHumidityinside} AvgHumOut: {day.AvgHumidityOutside} MoldRiskIn: {day.MouldRiskInside} MoldRiskOut: {day.MouldRiskOutside}");
+        Console.WriteLine($"{"Date".PadRight(padding)} | {"avg Temp ".PadRight(padding)} | {"avg Temp ".PadRight(padding)} | {"avg Humidity".PadRight(padding)} | {"avg Humidity".PadRight(padding)} | {"avg MoldRisk".PadRight(padding)} | {"avg MoldRisk".PadRight(padding)} | ");
+        Console.WriteLine($"{"Date".PadRight(padding)} | {"Inside".PadRight(padding)} | {"Outside".PadRight(padding)} | {"Inside".PadRight(padding)} | {"Outside".PadRight(padding)} | {"Inside".PadRight(padding)} | {"Outside".PadRight(padding)} | ");
+        Console.WriteLine($"{new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | {new String('-', padding)} | ");
+
+        Console.WriteLine($"{day.Date.PadRight(padding)} | {day.AvgTempInside.ToString().PadRight(padding)} | {day.AvgTempOutside.ToString().PadRight(padding)} | {day.AvgHumidityinside.ToString().PadRight(padding)} | {day.AvgHumidityOutside.ToString().PadRight(padding)} | {$"{day.MouldRiskInside.ToString()}%".PadRight(padding)} | {$"{day.MouldRiskOutside.ToString()}%".PadRight(padding)} | ");
+    }
+
+    public static List<Day> SortByDate(List<Day> days)
+    {
+        List<Day> sortedDays = days.OrderByDescending(d => d.Date).ToList();
+        return sortedDays;
     }
 
     public static List<Day> SortInsideTemp(List<Day> days)
@@ -351,9 +363,8 @@ internal class Program
         List<Day> sortedDays = days.OrderBy(d => d.MouldRiskInside).ToList();
         return sortedDays;
     }
-    private static List<Day> SortMoldOutside(List<Day> days)
+    private static void SortMoldOutside(List<Day> days)
     {
-        List<Day> sortedDays = days.OrderBy(d => d.MouldRiskOutside).ToList();
-        return sortedDays;
+        days.OrderBy(d => d.MouldRiskOutside).ToList();
     }
 }
