@@ -95,7 +95,7 @@ namespace WeatherData_Group1.Models
             double humidityFactor;
             if (humidity >= MinHumidity)
             {
-                humidityFactor = Math.Min(humidity / IdealHumidity, 1.0); //math min to make sure it is not more than 100%
+                humidityFactor = Math.Min(humidity / IdealHumidity, 1.0); //math min to make sure it is not more than 100% 
             }
             else { humidityFactor = 0.0; }
 

@@ -24,10 +24,12 @@ internal class Program
 
         int selectedIndex = 0;
         int padding = 12;
+
         while (true)
         {
             Console.CursorVisible = false;
             Printer(selectedIndex, meny);
+
             ConsoleKey key;
             
             key = Console.ReadKey(true).Key;
@@ -45,8 +47,7 @@ internal class Program
                 switch (selectedIndex)
                 {
                     case 0: //All
-                        SortByDate(days);
-                        PrintAllDays(days, padding);
+                        PrintAllDays(SortByDate(days), padding);
                         break;
                     case 1: //Search
                         Console.Clear();
@@ -123,8 +124,7 @@ internal class Program
                         }
                         else if (key == ConsoleKey.O)
                         {
-                            SortMoldOutside(days);
-                            PrintAllDays(days, padding);
+                            PrintAllDays(SortMoldOutside(days), padding);
                             break;
                         }
                         else
@@ -251,7 +251,6 @@ internal class Program
                         Console.ReadKey();
                         break;
                 }
-                key = ConsoleKey.NoName;
             }
             Console.Clear();
         }
@@ -333,10 +332,11 @@ internal class Program
         Console.WriteLine($"{day.Date.PadRight(padding)} | {day.AvgTempInside.ToString().PadRight(padding)} | {day.AvgTempOutside.ToString().PadRight(padding)} | {day.AvgHumidityinside.ToString().PadRight(padding)} | {day.AvgHumidityOutside.ToString().PadRight(padding)} | {$"{day.MouldRiskInside.ToString()}%".PadRight(padding)} | {$"{day.MouldRiskOutside.ToString()}%".PadRight(padding)} | ");
     }
 
-    public static void SortByDate(List<Day> days)
+    public static List<Day> SortByDate(List<Day> days)
     {
-        days.OrderByDescending(d => d.Date);
-        
+        ;
+        List<Day> sortedDays = days.OrderByDescending(d => d.Date).ToList();
+        return sortedDays;
     }
 
     public static List<Day> SortInsideTemp(List<Day> days)
@@ -364,8 +364,9 @@ internal class Program
         List<Day> sortedDays = days.OrderBy(d => d.MouldRiskInside).ToList();
         return sortedDays;
     }
-    private static void SortMoldOutside(List<Day> days)
+    private static List<Day> SortMoldOutside(List<Day> days)
     {
-        days.OrderBy(d => d.MouldRiskOutside).ToList();
+        List<Day> sortedDays = days.OrderBy(d => d.MouldRiskOutside).ToList();
+        return sortedDays;
     }
 }
